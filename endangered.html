@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Endangered Species – Time Capsule</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            color: #1b5e20;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 30px 0;
+            color: #2e7d32;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin: 40px 0 20px;
+            color: #388e3c;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #a5d6a7;
+        }
+
+        /* Category buttons */
+        .nav-buttons {
+            text-align: center;
+            margin: 30px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 5px 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .nav-btn:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.show-all {
+            background: #2e7d32;
+        }
+
+        /* Gallery grid */
+        .gallery {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 25px;
+            display: none;
+        }
+
+        .gallery.active {
+            display: grid;
+        }
+
+        /* Species cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            border-color: #4caf50;
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .card h3 {
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+            color: #2e7d32;
+            font-size: 16px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f8e9;
+        }
+
+        .back {
+            display: block;
+            margin: 30px auto;
+            width: fit-content;
+            padding: 12px 30px;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .back:hover {
+            background: #388e3c;
+        }
+
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 900px;
+            position: relative;
+            animation: modalFade 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #4caf50;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            background: #388e3c;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .modal-image {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .modal-image img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border: 3px solid #e8f5e9;
+        }
+
+        .modal-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .modal-info {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .modal-info h3 {
+            color: #2e7d32;
+            margin-top: 0;
+            font-size: 28px;
+            border-bottom: 2px solid #c8e6c9;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-info p {
+            line-height: 1.7;
+            font-size: 16px;
+            color: #424242;
+            margin-bottom: 20px;
+        }
+
+        .info-details {
+            background: #f1f8e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .info-details h4 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-details p {
+            color: #616161;
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #ff5722;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .status-badge.critically {
+            background: #d32f2f;
+        }
+
+        .status-badge.endangered {
+            background: #ff9800;
+        }
+
+        /* Full image modal */
+        .full-image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .full-image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .close-full-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #2e7d32;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-full-image:hover {
+            background: #4caf50;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .modal-body {
+                flex-direction: column;
+            }
+            
+            .modal-image, .modal-info {
+                min-width: 100%;
+            }
+            
+            .nav-buttons {
+                padding: 15px 10px;
+            }
+            
+            .nav-btn {
+                padding: 10px 15px;
+                margin: 5px;
+                font-size: 14px;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Endangered Species – Time Capsule</h1>
+
+<!-- Category Navigation -->
+<div class="nav-buttons">
+    <button class="nav-btn" onclick="showCategory('animals')">Animals</button>
+    <button class="nav-btn" onclick="showCategory('sea')">Sea Creatures</button>
+    <button class="nav-btn" onclick="showCategory('birds')">Birds</button>
+    <button class="nav-btn" onclick="showCategory('plants')">Plants</button>
+    <button class="nav-btn show-all" onclick="showAllCategories()">Show All Species</button>
+</div>
+
+<!-- Modal for displaying species info -->
+<div id="speciesModal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">×</button>
+        <div class="modal-body">
+            <div class="modal-image">
+                <img id="modalImg" src="" alt="" onclick="showFullImage()">
+            </div>
+            <div class="modal-info">
+                <h3 id="modalTitle"></h3>
+                <div id="modalStatus" class="status-badge"></div>
+                <p id="modalDescription"></p>
+                <div class="info-details">
+                    <h4>Conservation Information:</h4>
+                    <p id="modalDetails"></p>
+                    <p id="modalPopulation"></p>
+                    <p id="modalThreats"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Full image modal -->
+<div id="fullImageModal" class="full-image-modal">
+    <button class="close-full-image" onclick="closeFullImage()">×</button>
+    <img id="fullImage" src="" alt="">
+</div>
+
+<!-- Animals Gallery -->
+<h2 id="animals-title" style="display:none;">Endangered Animals</h2>
+<div class="gallery" id="animals-gallery">
+    <!-- Animals will be generated by JavaScript -->
+</div>
+
+<!-- Sea Creatures Gallery -->
+<h2 id="sea-title" style="display:none;">Endangered Sea Creatures</h2>
+<div class="gallery" id="sea-gallery">
+    <!-- Sea creatures will be generated by JavaScript -->
+</div>
+
+<!-- Birds Gallery -->
+<h2 id="birds-title" style="display:none;">Endangered Birds</h2>
+<div class="gallery" id="birds-gallery">
+    <!-- Birds will be generated by JavaScript -->
+</div>
+
+<!-- Plants Gallery -->
+<h2 id="plants-title" style="display:none;">Endangered Plants</h2>
+<div class="gallery" id="plants-gallery">
+    <!-- Plants will be generated by JavaScript -->
+</div>
+
+<button class="back" onclick="window.location.href='home.html'">← Back to Home</button>
+
+<script>
+    // Endangered species data with information
+    const speciesData = {
+        animals: [
+            { 
+                name: "Sumatran Tiger", 
+                image: "images/endangered/animals/Sumatran Tiger.jpg",
+                status: "Critically Endangered",
+                description: "The smallest of all living tiger subspecies and the only surviving tiger population in the Sunda Islands. With fewer than 400 individuals remaining, it is on the brink of extinction.",
+                details: "Population: Less than 400 • Habitat: Sumatra, Indonesia • Weight: 100-140 kg",
+                threats: "Primary Threats: Habitat loss due to palm oil plantations, poaching for skin and body parts, human-wildlife conflict"
+            },
+            { 
+                name: "Amur Leopard", 
+                image: "images/endangered/animals/Amur Leopard.jpg",
+                status: "Critically Endangered",
+                description: "The world's rarest big cat, adapted to life in temperate forests with a beautiful thick coat that changes with seasons. Conservation efforts have shown some success in recent years.",
+                details: "Population: ~100 individuals • Habitat: Russian Far East, Northeast China • Unique: Can survive in snow",
+                threats: "Primary Threats: Poaching, habitat loss, prey depletion, inbreeding depression"
+            },
+            { 
+                name: "Javan Rhino", 
+                image: "images/endangered/animals/Javan Rhino.jpg",
+                status: "Critically Endangered",
+                description: "One of the rarest large mammals on Earth, with only one known population in Ujung Kulon National Park, Indonesia. It's smaller than other Asian rhinos with a single horn.",
+                details: "Population: ~74 individuals • Habitat: Ujung Kulon NP, Indonesia • Horn: Single horn, up to 25 cm",
+                threats: "Primary Threats: Small population size, disease risk, natural disasters, potential poaching"
+            },
+            { 
+                name: "Sumatran Rhino", 
+                image: "images/endangered/animals/Sumatran Rhino.jpg",
+                status: "Critically Endangered",
+                description: "The smallest living rhinoceros and the only Asian rhino with two horns. It's covered with long hair and is the closest living relative to the extinct woolly rhinoceros.",
+                details: "Population: Less than 80 • Habitat: Sumatra and Borneo • Size: 1-1.5 meters tall",
+                threats: "Primary Threats: Poaching for horn, habitat fragmentation, small population isolation"
+            },
+            { 
+                name: "Mountain Gorilla", 
+                image: "images/endangered/animals/Mountain Gorilla.jpg",
+                status: "Endangered",
+                description: "One of the two subspecies of eastern gorilla, living in the volcanic mountains of Central Africa. Conservation efforts have helped increase their numbers from near extinction.",
+                details: "Population: ~1,063 • Habitat: Virunga Mountains (Rwanda, Uganda, DRC) • Social: Live in troops of 5-30",
+                threats: "Primary Threats: Habitat loss, poaching, civil unrest, diseases from humans"
+            },
+            { 
+                name: "Cross River Gorilla", 
+                image: "images/endangered/animals/Cross River Gorilla.jpg",
+                status: "Critically Endangered",
+                description: "The most endangered gorilla subspecies, restricted to a small forested region along the Nigeria-Cameroon border. They are the most genetically diverse gorilla subspecies.",
+                details: "Population: 200-300 • Habitat: Nigeria-Cameroon border • Diet: Fruits, leaves, stems",
+                threats: "Primary Threats: Habitat loss for agriculture, hunting, small population size"
+            },
+            { 
+                name: "Bornean Orangutan", 
+                image: "images/endangered/animals/Bornean Orangutan.jpg",
+                status: "Critically Endangered",
+                description: "One of three orangutan species, native to the island of Borneo. These great apes are highly intelligent and spend most of their time in trees.",
+                details: "Population: ~104,700 • Habitat: Borneo (Indonesia, Malaysia) • Lifespan: 35-45 years wild",
+                threats: "Primary Threats: Palm oil plantation expansion, illegal pet trade, forest fires, logging"
+            },
+            { 
+                name: "Sumatran Orangutan", 
+                image: "images/endangered/animals/Sumatran Orangutan.jpg",
+                status: "Critically Endangered",
+                description: "Rarer than the Bornean orangutan, with longer facial hair and closer social bonds. They are among the most intelligent primates.",
+                details: "Population: ~13,800 • Habitat: Northern Sumatra • Diet: 60% fruit, also leaves, bark",
+                threats: "Primary Threats: Deforestation for palm oil and paper pulp, illegal wildlife trade"
+            },
+            { 
+                name: "Asian Elephant", 
+                image: "images/endangered/animals/Asian Elephant.jpg",
+                status: "Endangered",
+                description: "Smaller than African elephants with smaller ears and only males have prominent tusks. They play crucial roles in maintaining forest ecosystems.",
+                details: "Population: 40,000-50,000 • Habitat: South and Southeast Asia • Height: 2-3.5 meters",
+                threats: "Primary Threats: Habitat loss and fragmentation, human-elephant conflict, poaching for ivory (males)"
+            },
+            { 
+                name: "African Forest Elephant", 
+                image: "images/endangered/animals/African Forest Elephant.jpg",
+                status: "Critically Endangered",
+                description: "Smaller than savanna elephants with straighter tusks and rounded ears. They are essential for seed dispersal in Congo Basin forests.",
+                details: "Population: Unknown but declining • Habitat: Congo Basin, West Africa • Tusks: Pink ivory",
+                threats: "Primary Threats: Poaching for ivory, habitat loss, human encroachment"
+            },
+            { 
+                name: "Saola (Asian Unicorn)", 
+                image: "images/endangered/animals/Saola (Asian Unicorn).jpg",
+                status: "Critically Endangered",
+                description: "One of the world's rarest large mammals, discovered only in 1992. Called 'Asian unicorn' due to its rarity and two parallel horns.",
+                details: "Population: Unknown, likely <100 • Habitat: Annamite Mountains (Vietnam, Laos) • Discovery: 1992",
+                threats: "Primary Threats: Hunting with snares, habitat loss, limited range"
+            },
+            { 
+                name: "Giant Panda", 
+                image: "images/endangered/animals/Giant Panda.jpg",
+                status: "Vulnerable",
+                description: "China's national treasure, known for its distinctive black-and-white coat. Conservation efforts have successfully upgraded its status from Endangered.",
+                details: "Population: ~1,864 wild • Habitat: Sichuan, Shaanxi, Gansu (China) • Diet: 99% bamboo",
+                threats: "Primary Threats: Habitat fragmentation, climate change affecting bamboo, low reproduction rate"
+            },
+            { 
+                name: "Snow Leopard", 
+                image: "images/endangered/animals/Snow Leopard.jpg",
+                status: "Vulnerable",
+                description: "Known as the 'ghost of the mountains' for its elusive nature. Adapted to cold, mountainous environments with thick fur and large nasal cavities.",
+                details: "Population: 4,000-6,500 • Habitat: Central Asian mountains • Altitude: 3,000-4,500 meters",
+                threats: "Primary Threats: Poaching for fur and bones, retaliatory killing, climate change, prey depletion"
+            },
+            { 
+                name: "Red Panda", 
+                image: "images/endangered/animals/Red Panda.jpg",
+                status: "Endangered",
+                description: "Not closely related to giant pandas, these cat-sized mammals are actually more closely related to raccoons. They have a false thumb for gripping bamboo.",
+                details: "Population: <10,000 mature • Habitat: Eastern Himalayas • Diet: Bamboo, also fruit, eggs",
+                threats: "Primary Threats: Habitat loss and fragmentation, poaching for pet trade, dog attacks"
+            }
+        ],
+        sea: [
+            { 
+                name: "North Atlantic Right Whale", 
+                image: "images/endangered/sea/North Atlantic Right Whale.jpg",
+                status: "Critically Endangered",
+                description: "One of the world's most endangered large whale species. Called 'right' whale because they were the 'right' whales to hunt—slow and floating when dead.",
+                details: "Population: ~350 • Length: 13-16 meters • Weight: 40-70 tons • Lifespan: 70 years",
+                threats: "Primary Threats: Ship strikes, fishing gear entanglements, climate change affecting food"
+            },
+            { 
+                name: "Blue Whale", 
+                image: "images/endangered/sea/Blue Whale.jpg",
+                status: "Endangered",
+                description: "The largest animal ever known to have existed, larger than any dinosaur. Their heart alone is the size of a small car.",
+                details: "Population: 10,000-25,000 • Length: Up to 30 meters • Weight: Up to 200 tons • Sound: 188 decibels",
+                threats: "Primary Threats: Ship strikes, climate change, ocean noise pollution, historical whaling impacts"
+            },
+            { 
+                name: "Hawksbill Sea Turtle", 
+                image: "images/endangered/sea/Hawksbill Sea Turtle.jpg",
+                status: "Critically Endangered",
+                description: "Named for its narrow, pointed beak. Their beautiful patterned shells (tortoiseshell) have been prized for centuries, leading to extensive hunting.",
+                details: "Population: Declining globally • Shell: Overlapping scales • Diet: Sponges (toxic to other animals)",
+                threats: "Primary Threats: Illegal tortoiseshell trade, habitat loss, fishing bycatch, climate change"
+            },
+            { 
+                name: "Kemp's Ridley Sea Turtle", 
+                image: "images/endangered/sea/Kemp's Ridley Sea Turtle.jpg",
+                status: "Critically Endangered",
+                description: "The smallest and most endangered sea turtle. Unique for its mass nesting events called 'arribadas' where thousands nest simultaneously.",
+                details: "Population: ~7,000-9,000 nesting females • Weight: 32-49 kg • Nesting: Daytime arribadas",
+                threats: "Primary Threats: Fishing bycatch, habitat degradation, pollution, climate change"
+            },
+            { 
+                name: "Whale Shark", 
+                image: "images/endangered/sea/Whale Shark.jpg",
+                status: "Endangered",
+                description: "The largest fish in the ocean, yet a gentle filter feeder. Each individual has a unique pattern of spots, like a fingerprint.",
+                details: "Population: Declining • Length: Up to 18 meters • Age: Can live 100+ years • Filter feeder",
+                threats: "Primary Threats: Ship strikes, bycatch, unregulated tourism, targeted fishing in some areas"
+            },
+            { 
+                name: "Southern Bluefin Tuna", 
+                image: "images/endangered/sea/Southern Bluefin Tuna.jpg",
+                status: "Critically Endangered",
+                description: "One of the most valuable fish in the sea, prized for sushi and sashimi. They are warm-blooded fish capable of crossing entire oceans.",
+                details: "Population: <10% of original • Speed: Up to 75 km/h • Migration: Transoceanic • Value: High",
+                threats: "Primary Threats: Overfishing, illegal fishing, bycatch, slow reproduction rate"
+            },
+            { 
+                name: "Scalloped Hammerhead Shark", 
+                image: "images/endangered/sea/Scalloped Hammerhead Shark.jpg",
+                status: "Critically Endangered",
+                description: "Named for the scalloped shape of its hammer-like head. They form spectacular schools of hundreds during migrations.",
+                details: "Population: Declined 95% in some areas • Head: Wide with indented center • Social: Schools",
+                threats: "Primary Threats: Shark finning, bycatch, habitat degradation, targeted fishing"
+            },
+            { 
+                name: "Common Sawfish", 
+                image: "images/endangered/sea/Common Sawfish.jpg",
+                status: "Critically Endangered",
+                description: "A ray with a long, tooth-lined snout used to detect and slash prey. Once common in warm coastal waters worldwide.",
+                details: "Population: Extinct in many areas • Snout: Up to 1.8 meters • Electric sensors detect prey",
+                threats: "Primary Threats: Bycatch, habitat loss, souvenir trade of saws, limited range"
+            },
+            { 
+                name: "Vaquita (Porpoise)", 
+                image: "images/endangered/sea/Vaquita (Porpoise).jpg",
+                status: "Critically Endangered",
+                description: "The world's most endangered marine mammal, with fewer than 10 individuals remaining. Found only in the northern Gulf of California.",
+                details: "Population: <10 individuals • Size: 1.5 meters • Range: Smallest of any cetacean • Discovery: 1958",
+                threats: "Primary Threats: Bycatch in illegal gillnets for totoaba fish, habitat degradation"
+            },
+            { 
+                name: "Mediterranean Monk Seal", 
+                image: "images/endangered/sea/Mediterranean Monk Seal.jpg",
+                status: "Endangered",
+                description: "One of the world's rarest seals, once abundant throughout the Mediterranean. Now restricted to a few isolated colonies.",
+                details: "Population: ~700 individuals • Colonies: Greece, Turkey, Mauritania • Diet: Fish, octopus",
+                threats: "Primary Threats: Habitat disturbance, fishing net entanglement, pollution, human persecution"
+            }
+        ],
+        birds: [
+            { 
+                name: "California Condor", 
+                image: "images/endangered/birds/California Condor.jpg",
+                status: "Critically Endangered",
+                description: "North America's largest flying bird with a wingspan of up to 3 meters. Brought back from near extinction through captive breeding.",
+                details: "Population: ~500 total (half in wild) • Wingspan: 2.5-3 meters • Soaring: 250 km daily",
+                threats: "Primary Threats: Lead poisoning from ammunition, microtrash ingestion, habitat loss"
+            },
+            { 
+                name: "Kakapo", 
+                image: "images/endangered/birds/Kakapo.jpg",
+                status: "Critically Endangered",
+                description: "The world's heaviest parrot and the only flightless parrot. Nocturnal and with a unique musty smell.",
+                details: "Population: ~250 • Weight: 2-4 kg • Lifespan: 90+ years • Breeding: Every 2-4 years",
+                threats: "Primary Threats: Predation by introduced mammals (cats, rats, stoats), low genetic diversity"
+            },
+            { 
+                name: "Philippine Eagle", 
+                image: "images/endangered/birds/Philippine Eagle.jpg",
+                status: "Critically Endangered",
+                description: "One of the largest and most powerful eagles in the world, and the national bird of the Philippines.",
+                details: "Population: 400-800 pairs • Length: 86-102 cm • Prey: Monkeys, flying lemurs, birds",
+                threats: "Primary Threats: Deforestation, shooting, mining, low reproductive rate (one egg every 2 years)"
+            },
+            { 
+                name: "Snowy Owl", 
+                image: "images/endangered/birds/Snowy Owl.jpg",
+                status: "Vulnerable",
+                description: "Made famous by the Harry Potter series. One of the largest owl species, adapted to Arctic life with dense feathering.",
+                details: "Population: Declining • Weight: 1.6-3 kg • Vision: Can see 3km • Nomadic: Follows prey",
+                threats: "Primary Threats: Climate change reducing habitat, human disturbance, vehicle collisions"
+            },
+            { 
+                name: "African Grey Parrot", 
+                image: "images/endangered/birds/African Grey Parrot.jpg",
+                status: "Endangered",
+                description: "Considered one of the most intelligent birds, capable of learning hundreds of words and solving complex problems.",
+                details: "Population: Declined 90% in some areas • Intelligence: Equivalent to 5-year-old child • Lifespan: 40-60 years",
+                threats: "Primary Threats: Illegal pet trade, habitat loss, hunting for bushmeat, local persecution"
+            },
+            { 
+                name: "Northern Bald Ibis", 
+                image: "images/endangered/birds/Northern Bald Ibis.jpg",
+                status: "Critically Endangered",
+                description: "A migratory bird with a distinctive bald red head and curved beak. Once widespread across Europe, North Africa, and Middle East.",
+                details: "Population: ~700 wild • Migration: Europe to Africa • History: Ancient Egyptian hieroglyphs",
+                threats: "Primary Threats: Habitat loss, pesticides, hunting, human disturbance at breeding sites"
+            },
+            { 
+                name: "Yellow-eyed Penguin", 
+                image: "images/endangered/birds/Yellow-eyed Penguin.jpg",
+                status: "Endangered",
+                description: "The world's rarest penguin, native to New Zealand. Named for their distinctive pale yellow eyes and yellow headband.",
+                details: "Population: ~4,000 • Height: 65-79 cm • Nesting: Forest, not beaches • Solitary: Less social",
+                threats: "Primary Threats: Habitat degradation, introduced predators, climate change, human disturbance"
+            },
+            { 
+                name: "Bali Myna", 
+                image: "images/endangered/birds/Bali Myna.jpg",
+                status: "Critically Endangered",
+                description: "Also known as Bali starling, it's almost entirely white with black wing tips and blue eye patches. Bali's only endemic vertebrate.",
+                details: "Population: <100 in wild • Endemic: Only to Bali • Symbol: Bali's fauna emblem",
+                threats: "Primary Threats: Illegal pet trade (highly prized), habitat loss, small population size"
+            },
+            { 
+                name: "Forest Owlet", 
+                image: "images/endangered/birds/Forest Owlet.jpg",
+                status: "Critically Endangered",
+                description: "Rediscovered in 1997 after being thought extinct for 113 years. A small, stocky owl endemic to central India.",
+                details: "Population: 250-1,000 • Rediscovery: 1997 • Range: Very limited • Diurnal: Active daytime",
+                threats: "Primary Threats: Habitat loss for agriculture, logging, human disturbance, small range"
+            },
+            { 
+                name: "Spoon-billed Sandpiper", 
+                image: "images/endangered/birds/Spoon-billed Sandpiper.jpg",
+                status: "Critically Endangered",
+                description: "A small wader with a unique spoon-shaped bill. Migrates from Russian Arctic to Southeast Asia, one of the world's most threatened migratory birds.",
+                details: "Population: <500 breeding pairs • Bill: Spoon-shaped tip • Migration: 8,000 km annually",
+                threats: "Primary Threats: Habitat loss at stopover sites, hunting in Southeast Asia, climate change"
+            }
+        ],
+        plants: [
+            { 
+                name: "Western Underground Orchid", 
+                image: "images/endangered/plants/Western Underground Orchid.jpg",
+                status: "Critically Endangered",
+                description: "One of the few plants that spends its entire life cycle underground. It lacks chlorophyll and depends on fungi for nutrition.",
+                details: "Population: <100 plants • Location: Western Australia • Pollination: Termites, beetles",
+                threats: "Primary Threats: Habitat clearance for agriculture, changed fire regimes, climate change"
+            },
+            { 
+                name: "Baseball Plant", 
+                image: "images/endangered/plants/Baseball Plant.jpg",
+                status: "Endangered",
+                description: "A succulent that resembles a baseball when young, becoming more cylindrical with age. Native to South Africa.",
+                details: "Population: Declining • Height: 20 cm • Water storage: Thick stem • Toxicity: Milky latex",
+                threats: "Primary Threats: Over-collection by collectors, habitat loss, slow growth rate"
+            },
+            { 
+                name: "Georgia Aster", 
+                image: "images/endangered/plants/Georgia Aster.jpg",
+                status: "Endangered",
+                description: "A perennial wildflower with vibrant purple flowers, native to southeastern United States.",
+                details: "Population: 60 populations known • Flower: Purple, October-November • Height: Up to 1 meter",
+                threats: "Primary Threats: Habitat loss to development, fire suppression, invasive species"
+            },
+            { 
+                name: "Florida Torreya", 
+                image: "images/endangered/plants/Florida Torreya.jpg",
+                status: "Critically Endangered",
+                description: "One of North America's most endangered conifers, with a natural range of just 25 kilometers along the Apalachicola River.",
+                details: "Population: <1,000 mature trees • Age: Living fossil • Scent: Unpleasant when crushed",
+                threats: "Primary Threats: Fungal disease, climate change, habitat loss, deer browsing"
+            },
+            { 
+                name: "Dragon's Blood Tree", 
+                image: "images/endangered/plants/Dragon's Blood Tree.jpg",
+                status: "Vulnerable",
+                description: "Known for its unique umbrella shape and red resin called 'dragon's blood' used since ancient times for medicine and dye.",
+                details: "Population: Declining • Location: Socotra (Yemen) • Resin: Medicinal uses • Shape: Umbrella",
+                threats: "Primary Threats: Overgrazing, climate change, development, slow regeneration"
+            },
+            { 
+                name: "Corpse Flower", 
+                image: "images/endangered/plants/Corpse Flower (Rafflesia arnoldii).jpg",
+                status: "Endangered",
+                description: "Produces the world's largest single flower (up to 1 meter diameter) and smells like rotting flesh to attract pollinators.",
+                details: "Population: Rare • Flower size: Up to 1 meter • Smell: Rotting flesh • Parasitic: No leaves",
+                threats: "Primary Threats: Habitat destruction, collection for traditional medicine, specific host needs"
+            },
+            { 
+                name: "Monkey Puzzle Tree", 
+                image: "images/endangered/plants/Monkey Puzzle Tree.jpg",
+                status: "Endangered",
+                description: "An ancient conifer species dating back to the dinosaurs. The national tree of Chile with sharp, overlapping leaves.",
+                details: "Population: Fragmented • Age: 200 million years • Height: 30-40 meters • Leaves: Sharp",
+                threats: "Primary Threats: Logging, habitat loss to agriculture, fire, slow growth"
+            },
+            { 
+                name: "Venus Flytrap", 
+                image: "images/endangered/plants/Venus Flytrap.jpg",
+                status: "Vulnerable",
+                description: "Famous carnivorous plant that snaps shut on insects. Native only to a small region in the Carolinas, USA.",
+                details: "Population: Declining • Range: 100 km radius in Carolinas • Speed: Closes in 0.1 seconds",
+                threats: "Primary Threats: Poaching for horticultural trade, habitat loss, fire suppression"
+            },
+            { 
+                name: "Welwitschia", 
+                image: "images/endangered/plants/Welwitschia.jpg",
+                status: "Near Threatened",
+                description: "A living fossil with only two leaves that grow continuously throughout its life, which can span over 1,000 years.",
+                details: "Population: Stable but limited • Age: 1,000+ years • Leaves: Only two, continuous growth",
+                threats: "Primary Threats: Climate change, off-road vehicle damage, collection, limited distribution"
+            },
+            { 
+                name: "Wollemi Pine", 
+                image: "images/endangered/plants/Wollemi Pine.jpg",
+                status: "Critically Endangered",
+                description: "A 'living fossil' discovered in 1994 in Australia. Thought extinct for 2 million years until its rediscovery.",
+                details: "Population: <100 mature trees wild • Discovery: 1994 • Age: 200 million-year-old species",
+                threats: "Primary Threats: Phytophthora disease, limited genetic diversity, climate change, fire"
+            }
+        ]
+    };
+
+    // Generate galleries
+    function generateGalleries() {
+        for (const category in speciesData) {
+            const gallery = document.getElementById(category + '-gallery');
+            gallery.innerHTML = '';
+            
+            speciesData[category].forEach(species => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => openModal(species, category);
+                
+                card.innerHTML = `
+                    <img src="${species.image}" alt="${species.name}" loading="lazy">
+                    <h3>${species.name}<br><small>${species.status}</small></h3>
+                `;
+                
+                gallery.appendChild(card);
+            });
+        }
+    }
+
+    // Modal functions
+    function openModal(species, category) {
+        document.getElementById('modalImg').src = species.image;
+        document.getElementById('modalImg').alt = species.name;
+        document.getElementById('modalTitle').textContent = species.name;
+        
+        // Set status badge with appropriate class
+        const statusBadge = document.getElementById('modalStatus');
+        statusBadge.textContent = species.status;
+        statusBadge.className = 'status-badge ' + 
+            (species.status.includes('Critically') ? 'critically' : 
+             species.status.includes('Endangered') ? 'endangered' : 'vulnerable');
+        
+        document.getElementById('modalDescription').textContent = species.description;
+        document.getElementById('modalDetails').innerHTML = species.details.replace(/•/g, '<br>•');
+        
+        // Add population and threats if available
+        const populationEl = document.getElementById('modalPopulation');
+        const threatsEl = document.getElementById('modalThreats');
+        
+        if (species.population) {
+            populationEl.textContent = species.population;
+        } else {
+            populationEl.textContent = '';
+        }
+        
+        if (species.threats) {
+            threatsEl.innerHTML = species.threats.replace(/•/g, '<br>•');
+        } else {
+            threatsEl.textContent = '';
+        }
+        
+        document.getElementById('speciesModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('speciesModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function showFullImage() {
+        const imgSrc = document.getElementById('modalImg').src;
+        document.getElementById('fullImage').src = imgSrc;
+        document.getElementById('fullImageModal').style.display = 'flex';
+    }
+
+    function closeFullImage() {
+        document.getElementById('fullImageModal').style.display = 'none';
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('speciesModal');
+        const fullImageModal = document.getElementById('fullImageModal');
+        
+        if (event.target == modal) {
+            closeModal();
+        }
+        if (event.target == fullImageModal) {
+            closeFullImage();
+        }
+    }
+
+    // Category display functions
+    function showAllCategories() {
+        const galleries = document.querySelectorAll('.gallery');
+        const titles = document.querySelectorAll('h2');
+        
+        galleries.forEach(gallery => {
+            gallery.classList.add('active');
+        });
+        
+        titles.forEach(title => {
+            title.style.display = 'block';
+        });
+        
+        // Scroll to top of galleries
+        window.scrollTo({top: document.querySelector('.nav-buttons').offsetTop, behavior: 'smooth'});
+    }
+    
+    function showCategory(category) {
+        const galleries = document.querySelectorAll('.gallery');
+        const titles = document.querySelectorAll('h2');
+        
+        galleries.forEach(gallery => {
+            gallery.classList.remove('active');
+        });
+        
+        titles.forEach(title => {
+            title.style.display = 'none';
+        });
+        
+        document.getElementById(category + '-gallery').classList.add('active');
+        document.getElementById(category + '-title').style.display = 'block';
+        
+        document.getElementById(category + '-gallery').scrollIntoView({behavior: 'smooth'});
+    }
+    
+    // Initialize
+    window.onload = function() {
+        generateGalleries();
+        showAllCategories();
+    }
+</script>
+
+</body>
+</html>

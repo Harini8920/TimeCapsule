@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Time Capsule | India's Wildlife Heritage</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, 
+                #0f2f0f 0%, 
+                #1b5e20 30%, 
+                #2e7d32 70%, 
+                #4caf50 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(76, 175, 80, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(33, 150, 83, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(27, 94, 32, 0.2) 0%, transparent 50%);
+            z-index: -2;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, 20px) rotate(1deg); }
+            66% { transform: translate(-20px, 30px) rotate(-1deg); }
+        }
+
+        /* Floating leaves animation */
+        .leaf {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0 50% 50% 50%;
+            transform: rotate(45deg);
+            animation: leafFall linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes leafFall {
+            to { transform: rotate(45deg) translateY(100vh); }
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            padding: 60px 50px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glow effect */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                #4caf50, #81c784, #a5d6a7, #81c784, #4caf50);
+            border-radius: 42px;
+            z-index: -1;
+            animation: glow 3s linear infinite;
+            background-size: 400% 400%;
+            filter: blur(10px);
+            opacity: 0.5;
+        }
+
+        @keyframes glow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Header styling */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, 
+                #ffffff 20%, 
+                #a5d6a7 40%, 
+                #81c784 60%, 
+                #ffffff 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Decorative separator */
+        .separator {
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.8), 
+                transparent);
+            margin: 40px auto;
+            border-radius: 2px;
+            animation: separatorPulse 3s infinite;
+        }
+
+        @keyframes separatorPulse {
+            0%, 100% { opacity: 0.5; width: 200px; }
+            50% { opacity: 1; width: 250px; }
+        }
+
+        /* Buttons grid */
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        /* Button styling */
+        .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 35px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            min-height: 200px;
+        }
+
+        .btn:hover {
+            transform: translateY(-10px) scale(1.03);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.7s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-icon {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: #a5d6a7;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover .btn-icon {
+            transform: scale(1.2) rotate(5deg);
+            color: #ffffff;
+        }
+
+        .btn-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .btn-desc {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* Specific button colors */
+        .btn-wildlife {
+            background: linear-gradient(135deg, 
+                rgba(27, 94, 32, 0.3), 
+                rgba(56, 142, 60, 0.2));
+            border-top: 4px solid #4caf50;
+        }
+
+        .btn-acts {
+            background: linear-gradient(135deg, 
+                rgba(30, 70, 100, 0.3), 
+                rgba(40, 90, 130, 0.2));
+            border-top: 4px solid #2196f3;
+        }
+
+        .btn-sanctuaries {
+            background: linear-gradient(135deg, 
+                rgba(170, 110, 50, 0.3), 
+                rgba(190, 130, 70, 0.2));
+            border-top: 4px solid #ff9800;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #a5d6a7;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 40px 25px;
+                margin: 20px auto;
+                border-radius: 30px;
+            }
+            
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .buttons-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .btn {
+                padding: 30px 20px;
+                min-height: 180px;
+            }
+            
+            .btn-title {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Particle effect */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: particleFloat linear infinite;
+        }
+
+        @keyframes particleFloat {
+            to { transform: translateY(-100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background overlay -->
+    <div class="bg-overlay"></div>
+    
+    <!-- Floating leaves -->
+    <div id="leaves"></div>
+    
+    <!-- Floating particles -->
+    <div id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Time Capsule</h1>
+            <div class="tagline">Preserving India's Natural Heritage</div>
+            <div class="subtitle">
+                Journey through India's lost and threatened wildlife, explore conservation efforts, 
+                understand wildlife protection acts, and discover sanctuaries that preserve our natural heritage.
+            </div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="buttons-grid">
+            <a href="main.html" class="btn btn-wildlife">
+                <i class="fas fa-paw btn-icon"></i>
+                <div class="btn-title">Explore Wildlife</div>
+                <div class="btn-desc">
+                    Discover endangered and extinct species of India with detailed information and conservation status
+                </div>
+            </a>
+
+            <a href="acts.html" class="btn btn-acts">
+                <i class="fas fa-gavel btn-icon"></i>
+                <div class="btn-title">Wildlife Protection Acts</div>
+                <div class="btn-desc">
+                    Learn about India's wildlife protection laws, regulations, and conservation policies
+                </div>
+            </a>
+
+            <a href="sanctuaries.html" class="btn btn-sanctuaries">
+                <i class="fas fa-tree btn-icon"></i>
+                <div class="btn-title">Wildlife Sanctuaries</div>
+                <div class="btn-desc">
+                    Explore India's protected areas, national parks, and biodiversity hotspots
+                </div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Time Capsule Project | Conserving India's Biodiversity</p>
+            <p>Made with <i class="fas fa-heart" style="color: #ff6b6b;"></i> for wildlife conservation</p>
+        </div>
+    </div>
+
+    <script>
+        // Create floating leaves
+        function createLeaves() {
+            const leavesContainer = document.getElementById('leaves');
+            const leafCount = 15;
+            
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                
+                // Random properties
+                const size = Math.random() * 30 + 15;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 10;
+                const opacity = Math.random() * 0.2 + 0.1;
+                
+                // Set styles
+                leaf.style.width = `${size}px`;
+                leaf.style.height = `${size}px`;
+                leaf.style.left = `${left}vw`;
+                leaf.style.animationDuration = `${duration}s`;
+                leaf.style.animationDelay = `${delay}s`;
+                leaf.style.opacity = opacity;
+                leaf.style.background = `rgba(${Math.random()*100+155}, ${Math.random()*100+200}, ${Math.random()*100+155}, ${opacity})`;
+                
+                leavesContainer.appendChild(leaf);
+            }
+        }
+        
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random properties
+                const size = Math.random() * 3 + 1;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 30 + 20;
+                const delay = Math.random() * 15;
+                
+                // Set styles
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}vw`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Add click ripple effect to buttons
+        function addRippleEffect() {
+            const buttons = document.querySelectorAll('.btn');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.4);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        width: ${size}px;
+                        height: ${size}px;
+                        top: ${y}px;
+                        left: ${x}px;
+                        pointer-events: none;
+                    `;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        if (ripple.parentNode === this) {
+                            this.removeChild(ripple);
+                        }
+                    }, 600);
+                });
+            });
+        }
+        
+        // Add hover sound effect simulation
+        function addHoverEffects() {
+            const buttons = document.querySelectorAll('.btn');
+            
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-12px) scale(1.05)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+        
+        // Add keyboard navigation
+        function addKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                const buttons = document.querySelectorAll('.btn');
+                let currentIndex = Array.from(buttons).findIndex(btn => btn === document.activeElement);
+                
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    currentIndex = (currentIndex + 1) % buttons.length;
+                    buttons[currentIndex].focus();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    currentIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+                    buttons[currentIndex].focus();
+                } else if (e.key === 'Enter' && document.activeElement.classList.contains('btn')) {
+                    document.activeElement.click();
+                }
+            });
+        }
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            createLeaves();
+            createParticles();
+            addRippleEffect();
+            addHoverEffects();
+            addKeyboardNavigation();
+            
+            // Add ripple animation to CSS
+            if (!document.querySelector('#ripple-animation')) {
+                const style = document.createElement('style');
+                style.id = 'ripple-animation';
+                style.textContent = `
+                    @keyframes ripple {
+                        to {
+                            transform: scale(4);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Auto-refresh leaves every 30 seconds for variety
+            setInterval(() => {
+                const leaves = document.getElementById('leaves');
+                leaves.innerHTML = '';
+                createLeaves();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

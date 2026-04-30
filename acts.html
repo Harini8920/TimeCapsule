@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Indian Wildlife Protection Acts – Time Capsule</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #1b5e20;
+            --secondary-green: #2e7d32;
+            --light-green: #4caf50;
+            --pale-green: #e8f5e9;
+            --gold: #ff9800;
+            --brown: #795548;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #eef7ee 0%, #fff6e5 50%, #e8f5e9 100%);
+            color: #1b3b1b;
+            min-height: 100vh;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        /* Background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(27, 94, 32, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 30%, rgba(46, 125, 50, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 20% 80%, rgba(121, 85, 72, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(76, 175, 80, 0.08) 0%, transparent 20%);
+            background-size: 300px 300px, 250px 250px, 280px 280px, 230px 230px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 3.5rem;
+            color: var(--primary-green);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--light-green), var(--gold));
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--secondary-green);
+            font-weight: 500;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            min-width: 150px;
+            border-top: 4px solid var(--light-green);
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--brown);
+            font-weight: 600;
+        }
+
+        /* Acts Grid */
+        .acts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        /* Act Card */
+        .act-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .act-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .act-header {
+            padding: 25px 25px 15px;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+            position: relative;
+        }
+
+        .act-year {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .act-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .act-icon {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .act-summary {
+            padding: 20px 25px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            background: var(--pale-green);
+        }
+
+        .act-highlights {
+            padding: 15px 25px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .act-highlights ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .act-highlights li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .act-highlights li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--light-green);
+            font-weight: bold;
+        }
+
+        /* Act Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 800px;
+            position: relative;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-green);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: var(--secondary-green);
+        }
+
+        .modal-title {
+            font-size: 2.2rem;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            padding-right: 50px;
+        }
+
+        .modal-year {
+            display: inline-block;
+            background: var(--light-green);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .modal-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #444;
+        }
+
+        .modal-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--pale-green);
+            border-radius: 15px;
+        }
+
+        .modal-section h3 {
+            color: var(--secondary-green);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .modal-section ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .modal-section li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .modal-section li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--light-green);
+            font-size: 1.5rem;
+        }
+
+        /* Back button */
+        .back {
+            display: block;
+            width: fit-content;
+            margin: 50px auto 30px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--light-green), var(--secondary-green));
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Timeline effect */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--light-green), transparent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .acts-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .modal-content {
+                padding: 25px 20px;
+                margin: 20px auto;
+            }
+
+            .modal-title {
+                font-size: 1.8rem;
+            }
+
+            .stats-bar {
+                gap: 15px;
+            }
+
+            .stat {
+                min-width: 120px;
+                padding: 12px 15px;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .act-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .act-card:nth-child(1) { animation-delay: 0.1s; }
+        .act-card:nth-child(2) { animation-delay: 0.2s; }
+        .act-card:nth-child(3) { animation-delay: 0.3s; }
+        .act-card:nth-child(4) { animation-delay: 0.4s; }
+        .act-card:nth-child(5) { animation-delay: 0.5s; }
+        .act-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Indian Wildlife Protection Acts</h1>
+            <div class="subtitle">
+                Comprehensive legal framework for wildlife conservation in India
+            </div>
+            
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-number">6+</div>
+                    <div class="stat-label">Major Acts</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Years of Protection</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Protected Species</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">900+</div>
+                    <div class="stat-label">Sanctuaries</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="acts-grid" id="actsGrid">
+                <!-- Acts will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <button class="back" onclick="window.location.href='home.html'">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </button>
+    </div>
+
+    <!-- Modal for detailed act information -->
+    <div id="actModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="modal-year" id="modalYear"></div>
+            <div class="modal-description" id="modalDescription"></div>
+            
+            <div class="modal-section">
+                <h3>Key Provisions</h3>
+                <ul id="modalProvisions"></ul>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Significance</h3>
+                <p id="modalSignificance"></p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Impact</h3>
+                <ul id="modalImpact"></ul>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Recent Amendments</h3>
+                <ul id="modalAmendments"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Acts data with detailed information
+        const actsData = [
+            {
+                id: 1,
+                title: "Wildlife Protection Act, 1972",
+                year: "1972",
+                icon: "fa-paw",
+                summary: "India's primary legislation for wildlife protection, establishing protected areas and regulating hunting.",
+                description: "The Wildlife Protection Act of 1972 is a comprehensive legislation that provides the legal framework for wildlife protection in India. It was enacted to protect India's wildlife from poaching, smuggling, and illegal trade.",
+                provisions: [
+                    "Prohibits hunting of specified animals",
+                    "Establishes national parks and sanctuaries",
+                    "Regulates trade in wildlife products",
+                    "Protects endangered species",
+                    "Controls zoos and captive breeding"
+                ],
+                significance: "This act forms the backbone of wildlife conservation in India and has been instrumental in protecting species like tigers, elephants, and rhinos.",
+                impact: [
+                    "Creation of Project Tiger (1973)",
+                    "Establishment of 104 national parks",
+                    "Protection of 101 species in Schedule I",
+                    "Reduction in illegal wildlife trade"
+                ],
+                amendments: [
+                    "2002 Amendment: Enhanced punishment for offences",
+                    "2006 Amendment: Included conservation reserves",
+                    "2013 Amendment: Strengthened CITES implementation"
+                ]
+            },
+            {
+                id: 2,
+                title: "Forest Conservation Act, 1980",
+                year: "1980",
+                icon: "fa-tree",
+                summary: "Regulates diversion of forest land for non-forest purposes and promotes conservation.",
+                description: "Enacted to check deforestation and conserve forests, this act requires central government approval for any diversion of forest land for non-forest purposes.",
+                provisions: [
+                    "Central approval for forest land diversion",
+                    "Compulsory afforestation",
+                    "Environmental impact assessment",
+                    "Compensation for forest loss",
+                    "Restriction on mining in forests"
+                ],
+                significance: "Has prevented large-scale deforestation and ensured sustainable use of forest resources.",
+                impact: [
+                    "Conserved 713,789 sq km forest area",
+                    "Regulated infrastructure projects",
+                    "Promoted compensatory afforestation",
+                    "Protected tribal rights in forests"
+                ],
+                amendments: [
+                    "1988 Amendment: Stricter enforcement",
+                    "1992 Amendment: Included national parks",
+                    "2023 Amendment: Digital monitoring"
+                ]
+            },
+            {
+                id: 3,
+                title: "Biological Diversity Act, 2002",
+                year: "2002",
+                icon: "fa-dna",
+                summary: "Implements CBD provisions for conservation and sustainable use of biological resources.",
+                description: "This act gives effect to the United Nations Convention on Biological Diversity (CBD) and aims to conserve biological diversity, promote sustainable use, and ensure fair benefit sharing.",
+                provisions: [
+                    "Establishment of National Biodiversity Authority",
+                    "Regulation of access to biological resources",
+                    "Protection of traditional knowledge",
+                    "Local Biodiversity Management Committees",
+                    "Benefit sharing mechanism"
+                ],
+                significance: "Recognizes India's rich biodiversity and traditional knowledge while regulating bioprospecting.",
+                impact: [
+                    "Documentation of traditional knowledge",
+                    "Regulation of bioprospecting",
+                    "Community participation in conservation",
+                    "Protection of medicinal plants"
+                ],
+                amendments: [
+                    "2021 Amendment: Simplified procedures",
+                    "2023 Amendment: Digital biodiversity register"
+                ]
+            },
+            {
+                id: 4,
+                title: "Environment Protection Act, 1986",
+                year: "1986",
+                icon: "fa-earth-asia",
+                summary: "Umbrella legislation for environmental protection and regulation of activities.",
+                description: "Enacted after the Bhopal gas tragedy, this act empowers the central government to take measures for environmental protection and pollution control.",
+                provisions: [
+                    "Power to set environmental standards",
+                    "Regulation of industrial location",
+                    "Management of hazardous substances",
+                    "Environmental impact assessment",
+                    "Penalties for violations"
+                ],
+                significance: "Provides the legal basis for environmental regulation in India.",
+                impact: [
+                    "Formulation of pollution control boards",
+                    "Regulation of coastal zones",
+                    "Control of hazardous waste",
+                    "Establishment of environmental courts"
+                ],
+                amendments: [
+                    "1991 Amendment: Public Liability Insurance",
+                    "2010 Amendment: National Green Tribunal"
+                ]
+            },
+            {
+                id: 5,
+                title: "Scheduled Tribes and Other Traditional Forest Dwellers Act, 2006",
+                year: "2006",
+                icon: "fa-people-group",
+                summary: "Recognizes forest rights of tribal communities and traditional dwellers.",
+                description: "Commonly known as the Forest Rights Act, this legislation recognizes and vests forest rights in forest-dwelling communities.",
+                provisions: [
+                    "Recognition of individual forest rights",
+                    "Community forest resource rights",
+                    "Right to protect and conserve forests",
+                    "Gram Sabha's role in forest management",
+                    "Protection from illegal eviction"
+                ],
+                significance: "Empowers forest-dwelling communities and integrates conservation with livelihood security.",
+                impact: [
+                    "Recognition of 4.5 million claims",
+                    "Community-led conservation initiatives",
+                    "Reduced human-wildlife conflict",
+                    "Sustainable forest management"
+                ],
+                amendments: [
+                    "2012 Amendment: Clarified procedures",
+                    "2019 Amendment: Enhanced implementation"
+                ]
+            },
+            {
+                id: 6,
+                title: "Prevention of Cruelty to Animals Act, 1960",
+                year: "1960",
+                icon: "fa-heart",
+                summary: "Prevents infliction of unnecessary pain or suffering on animals.",
+                description: "This act aims to prevent cruelty to animals and provides for the establishment of animal welfare boards.",
+                provisions: [
+                    "Prohibition of animal cruelty",
+                    "Regulation of animal markets",
+                    "Control of animal experimentation",
+                    "Prevention of animal fighting",
+                    "Establishment of AWBI"
+                ],
+                significance: "First comprehensive legislation for animal welfare in India.",
+                impact: [
+                    "Establishment of Animal Welfare Board",
+                    "Regulation of animal shelters",
+                    "Ban on animal testing for cosmetics",
+                    "Protection of working animals"
+                ],
+                amendments: [
+                    "1982 Amendment: Enhanced penalties",
+                    "2001 Amendment: Included performing animals",
+                    "2017 Amendment: Stricter enforcement"
+                ]
+            },
+            {
+                id: 7,
+                title: "Indian Forest Act, 1927",
+                year: "1927",
+                icon: "fa-mountain",
+                summary: "Governs forest management, transit of forest produce, and duty leviable.",
+                description: "Though enacted during British rule, this act continues to govern forest administration in India with subsequent amendments.",
+                provisions: [
+                    "Classification of forests",
+                    "Regulation of forest produce",
+                    "Control of forest offences",
+                    "Power to make rules",
+                    "Revenue from forests"
+                ],
+                significance: "Forms the basis of forest governance despite its colonial origins.",
+                impact: [
+                    "Systematic forest management",
+                    "Revenue generation for conservation",
+                    "Establishment of forest departments",
+                    "Traditional forest governance"
+                ],
+                amendments: [
+                    "1984 Amendment: Modernized provisions",
+                    "2019 Amendment: Proposed new forest law"
+                ]
+            },
+            {
+                id: 8,
+                title: "Air (Prevention and Control of Pollution) Act, 1981",
+                year: "1981",
+                icon: "fa-wind",
+                summary: "Provides for prevention, control and abatement of air pollution.",
+                description: "This was India's first attempt to tackle air pollution at the national level, establishing pollution control boards.",
+                provisions: [
+                    "Establishment of pollution control boards",
+                    "Standards for air quality",
+                    "Monitoring of emissions",
+                    "Consent for industries",
+                    "Penalties for violations"
+                ],
+                significance: "Laid foundation for air quality management in India.",
+                impact: [
+                    "Establishment of CPCB and SPCBs",
+                    "Air quality monitoring network",
+                    "Regulation of vehicular emissions",
+                    "Industrial pollution control"
+                ],
+                amendments: [
+                    "1987 Amendment: Included noise pollution",
+                    "1990 Amendment: Enhanced enforcement"
+                ]
+            }
+        ];
+
+        // Generate acts cards
+        function generateActs() {
+            const actsGrid = document.getElementById('actsGrid');
+            actsGrid.innerHTML = '';
+            
+            actsData.forEach(act => {
+                const card = document.createElement('div');
+                card.className = 'act-card';
+                card.onclick = () => openModal(act);
+                
+                card.innerHTML = `
+                    <div class="act-header">
+                        <div class="act-year">${act.year}</div>
+                        <div class="act-icon"><i class="fas ${act.icon}"></i></div>
+                        <div class="act-title">${act.title}</div>
+                    </div>
+                    <div class="act-summary">
+                        ${act.summary}
+                    </div>
+                    <div class="act-highlights">
+                        <ul>
+                            ${act.provisions.slice(0, 3).map(provision => `<li>${provision}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                
+                actsGrid.appendChild(card);
+            });
+        }
+
+        // Modal functions
+        function openModal(act) {
+            document.getElementById('modalTitle').textContent = act.title;
+            document.getElementById('modalYear').textContent = act.year;
+            document.getElementById('modalDescription').textContent = act.description;
+            
+            // Set provisions
+            const provisionsList = document.getElementById('modalProvisions');
+            provisionsList.innerHTML = act.provisions.map(provision => `<li>${provision}</li>`).join('');
+            
+            // Set significance
+            document.getElementById('modalSignificance').textContent = act.significance;
+            
+            // Set impact
+            const impactList = document.getElementById('modalImpact');
+            impactList.innerHTML = act.impact.map(item => `<li>${item}</li>`).join('');
+            
+            // Set amendments
+            const amendmentsList = document.getElementById('modalAmendments');
+            amendmentsList.innerHTML = act.amendments.map(amendment => `<li>${amendment}</li>`).join('');
+            
+            // Show modal
+            document.getElementById('actModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('actModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('actModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        window.onload = function() {
+            generateActs();
+            
+            // Add smooth scroll for cards
+            document.querySelectorAll('.act-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const actId = this.dataset.id;
+                    // Modal opens via openModal function
+                });
+            });
+        }
+    </script>
+</body>
+</html>

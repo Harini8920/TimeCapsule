@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extinct Species – Time Capsule</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f0e6, #e8dfd8);
+            color: #3e2723;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 30px 0;
+            color: #4e342e;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 40px 0 20px;
+            color: #5d4037;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d7ccc8;
+        }
+
+        /* Category buttons */
+        .category-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .category-btn {
+            background: white;
+            padding: 25px 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 18px;
+            color: #5d4037;
+            font-weight: bold;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        .category-btn.animals { background: #ffebee; }
+        .category-btn.sea { background: #e3f2fd; }
+        .category-btn.birds { background: #f3e5f5; }
+        .category-btn.plants { background: #e8f5e8; }
+
+        /* Gallery grid */
+        .gallery {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 25px;
+            display: none; /* Hidden by default */
+        }
+
+        .gallery.active {
+            display: grid;
+        }
+
+        /* Species cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card h3 {
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+            color: #5d4037;
+            font-size: 16px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Navigation and buttons */
+        .nav-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .nav-btn {
+            background: #6d4c41;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            margin: 0 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #5d4037;
+        }
+
+        .back {
+            display: block;
+            margin: 30px auto;
+            width: fit-content;
+            padding: 12px 30px;
+            background: #6d4c41;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back:hover {
+            background: #5d4037;
+        }
+
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+            animation: modalFade 0.3s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #6d4c41;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .modal-image {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .modal-image img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .modal-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .modal-info {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .modal-info h3 {
+            color: #4e342e;
+            margin-top: 0;
+            font-size: 28px;
+            border-bottom: 2px solid #d7ccc8;
+            padding-bottom: 10px;
+        }
+
+        .modal-info p {
+            line-height: 1.6;
+            font-size: 16px;
+            color: #5d4037;
+        }
+
+        .info-details {
+            background: #f5f0e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .info-details h4 {
+            color: #5d4037;
+            margin-bottom: 10px;
+        }
+
+        /* Full image modal */
+        .full-image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .full-image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+        }
+
+        .close-full-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: black;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Extinct Species – Time Capsule</h1>
+
+<!-- Category Navigation -->
+<div class="nav-buttons">
+    <button class="nav-btn" onclick="showCategory('animals')">Animals</button>
+    <button class="nav-btn" onclick="showCategory('sea')">Sea Creatures</button>
+    <button class="nav-btn" onclick="showCategory('birds')">Birds</button>
+    <button class="nav-btn" onclick="showCategory('plants')">Plants</button>
+    <button class="nav-btn" onclick="showAllCategories()">Show All</button>
+</div>
+
+<!-- Modal for displaying species info -->
+<div id="speciesModal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">×</button>
+        <div class="modal-body">
+            <div class="modal-image">
+                <img id="modalImg" src="" alt="" onclick="showFullImage()">
+            </div>
+            <div class="modal-info">
+                <h3 id="modalTitle"></h3>
+                <p id="modalDescription"></p>
+                <div class="info-details">
+                    <h4>Details:</h4>
+                    <p id="modalDetails"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Full image modal -->
+<div id="fullImageModal" class="full-image-modal">
+    <button class="close-full-image" onclick="closeFullImage()">×</button>
+    <img id="fullImage" src="" alt="">
+</div>
+
+<!-- Animals Gallery -->
+<h2 id="animals-title" style="display:none;">Extinct Animals</h2>
+<div class="gallery" id="animals-gallery">
+    <!-- Animals will be generated by JavaScript -->
+</div>
+
+<!-- Sea Creatures Gallery -->
+<h2 id="sea-title" style="display:none;">Extinct Sea Creatures</h2>
+<div class="gallery" id="sea-gallery">
+    <!-- Sea creatures will be generated by JavaScript -->
+</div>
+
+<!-- Birds Gallery -->
+<h2 id="birds-title" style="display:none;">Extinct Birds</h2>
+<div class="gallery" id="birds-gallery">
+    <!-- Birds will be generated by JavaScript -->
+</div>
+
+<!-- Plants Gallery -->
+<h2 id="plants-title" style="display:none;">Extinct Plants</h2>
+<div class="gallery" id="plants-gallery">
+    <!-- Plants will be generated by JavaScript -->
+</div>
+
+<button class="back" onclick="window.location.href='home.html'">← Back to Home</button>
+
+<script>
+    // Species data with information
+    const speciesData = {
+        animals: [
+            { 
+                name: "Woolly Mammoth", 
+                image: "images/extinct/animals/Woolly Mammoth.jpg",
+                description: "The Woolly Mammoth was one of the last in a line of mammoth species, living during the Pleistocene until its extinction in the Holocene epoch.",
+                details: "Habitat: Arctic tundra • Era: Pleistocene • Extinction: ~4,000 years ago • Height: Up to 3.4 meters • Weight: Up to 6 tons"
+            },
+            { 
+                name: "Sabre-toothed Cat", 
+                image: "images/extinct/animals/Sabre-toothed Cat.jpg",
+                description: "Also known as Smilodon, this predator is famous for its extremely long canine teeth which could reach up to 28 cm in length.",
+                details: "Habitat: Americas • Era: Pleistocene • Extinction: ~10,000 years ago • Notable: Ambush predator • Diet: Large herbivores"
+            },
+            { 
+                name: "Woolly Rhinoceros", 
+                image: "images/extinct/animals/Woolly Rhinoceros.jpg",
+                description: "A species of rhinoceros that was covered with long thick hair, allowing it to survive in the harsh mammoth steppe.",
+                details: "Habitat: Northern Eurasia • Era: Pleistocene • Extinction: ~14,000 years ago • Horn length: Up to 1 meter • Weight: 2-3 tons"
+            },
+            { 
+                name: "Irish Elk", 
+                image: "images/extinct/animals/Irish Elk.jpg",
+                description: "Despite its name, it was actually a giant deer with the largest antlers of any known cervid, spanning up to 3.65 meters.",
+                details: "Habitat: Eurasia • Era: Pleistocene • Extinction: ~7,700 years ago • Antler span: Up to 3.65m • Shoulder height: 2.1 meters"
+            },
+            { 
+                name: "Giant Ground Sloth", 
+                image: "images/extinct/animals/Giant Ground Sloth.jpg",
+                description: "Enormous relatives of modern tree sloths that walked on the ground and could reach sizes comparable to elephants.",
+                details: "Habitat: Americas • Era: Pleistocene • Extinction: ~11,000 years ago • Height: Up to 6 meters • Weight: Up to 4 tons"
+            },
+            { 
+                name: "Mastodon", 
+                image: "images/extinct/animals/Mastodon.jpg",
+                description: "Ancient relatives of elephants that had straighter tusks and different tooth structure compared to mammoths.",
+                details: "Habitat: North & Central America • Era: Miocene to Pleistocene • Extinction: ~10,000 years ago • Diet: Browser • Tusks: Up to 5 meters"
+            },
+            { 
+                name: "Glyptodon", 
+                image: "images/extinct/animals/Glyptodon.jpg",
+                description: "A massive, armored mammal related to modern armadillos, with a domed shell made of bony plates.",
+                details: "Habitat: South America • Era: Pleistocene • Extinction: ~10,000 years ago • Size: Car-sized • Weight: Up to 2 tons • Armor: Bony plates"
+            },
+            { 
+                name: "Dire Wolf", 
+                image: "images/extinct/animals/Dire Wolf.jpg",
+                description: "Larger and more robust than modern gray wolves, made famous by their appearance in popular culture.",
+                details: "Habitat: Americas • Era: Pleistocene • Extinction: ~9,500 years ago • Weight: 68-110 kg • Pack hunter • Stronger bite than gray wolves"
+            },
+            { 
+                name: "Cave Lion", 
+                image: "images/extinct/animals/Cave Lion.jpg",
+                description: "One of the largest known subspecies of lion, depicted in Paleolithic cave paintings.",
+                details: "Habitat: Eurasia • Era: Pleistocene • Extinction: ~14,000 years ago • Size: 25% larger than modern lions • Cave paintings found in France"
+            },
+            { 
+                name: "Giant Short-faced Bear", 
+                image: "images/extinct/animals/Giant Short-faced Bear.jpg",
+                description: "The largest terrestrial carnivoran that ever lived in North America, with long legs for running.",
+                details: "Habitat: North America • Era: Pleistocene • Extinction: ~12,000 years ago • Height: 1.8m at shoulder • Weight: 700-1,000 kg • Speed: Fast runner"
+            },
+            { 
+                name: "Thylacine (Tasmanian Tiger)", 
+                image: "images/extinct/animals/Thylacine (Tasmanian Tiger).jpg",
+                description: "The largest known carnivorous marsupial of modern times, last known individual died in 1936.",
+                details: "Habitat: Australia, Tasmania • Extinction: 1936 • Unique: Marsupial with tiger-like stripes • Jaw could open 120 degrees"
+            },
+            { 
+                name: "Quagga", 
+                image: "images/extinct/animals/Quagga.jpg",
+                description: "A subspecies of plains zebra with stripes only on the front part of its body.",
+                details: "Habitat: South Africa • Extinction: 1883 • Last captive died in Amsterdam • Hybrid of zebra and horse appearance"
+            },
+            { 
+                name: "Steller's Sea Cow", 
+                image: "images/extinct/animals/Steller's Sea Cow.jpg",
+                description: "A gigantic, gentle relative of manatees and dugongs, discovered in 1741 and hunted to extinction within 27 years.",
+                details: "Habitat: Bering Sea • Extinction: 1768 • Size: Up to 9 meters • Weight: 8-10 tons • Diet: Kelp"
+            },
+            { 
+                name: "Aurochs", 
+                image: "images/extinct/animals/Aurochs.jpg",
+                description: "The wild ancestor of domestic cattle, much larger than modern cattle with impressive curved horns.",
+                details: "Habitat: Europe, Asia, Africa • Extinction: 1627 • Height: 1.8m at shoulder • Ancestor of all domestic cattle"
+            },
+            { 
+                name: "Pyrenean Ibex (Bucardo)", 
+                image: "images/extinct/animals/Pyrenean Ibex (Bucardo).jpg",
+                description: "A subspecies of Spanish ibex that went extinct in 2000, briefly brought back through cloning in 2003.",
+                details: "Habitat: Pyrenees • Extinction: 2000 • First animal to be 'de-extincted' via cloning in 2003 • Cloned individual lived 7 minutes"
+            }
+        ],
+        sea: [
+            { 
+                name: "Megalodon", 
+                image: "images/extinct/sea/Megalodon.jpg",
+                description: "The largest shark to have ever lived, with teeth the size of a human hand and a bite force unmatched in history.",
+                details: "Habitat: Worldwide oceans • Era: Miocene to Pliocene • Extinction: ~3.6 million years ago • Length: Up to 18 meters • Diet: Whales"
+            },
+            { 
+                name: "Plesiosaur", 
+                image: "images/extinct/sea/Plesiosaur.jpg",
+                description: "Marine reptiles with long necks, small heads, and four large flippers, often associated with the Loch Ness Monster legend.",
+                details: "Habitat: Worldwide oceans • Era: Jurassic to Cretaceous • Extinction: 66 million years ago • Neck: Up to 76 vertebrae • Diet: Fish and squid"
+            },
+            { 
+                name: "Mosasaur", 
+                image: "images/extinct/sea/Mosasaur.jpg",
+                description: "Apex predators of the Cretaceous seas, related to modern monitor lizards and snakes.",
+                details: "Habitat: Worldwide oceans • Era: Late Cretaceous • Extinction: 66 million years ago • Length: Up to 17 meters • Top predator of its time"
+            },
+            { 
+                name: "Ichthyosaur", 
+                image: "images/extinct/sea/Ichthyosaur.jpg",
+                description: "Dolphin-like marine reptiles that evolved a similar body shape to modern dolphins through convergent evolution.",
+                details: "Habitat: Worldwide oceans • Era: Triassic to Cretaceous • Extinction: ~90 million years ago • Viviparous (gave live birth) • Streamlined body"
+            },
+            { 
+                name: "Dunkleosteus", 
+                image: "images/extinct/sea/Dunkleosteus.jpg",
+                description: "A prehistoric fish with armored plates for skin and a bite force that could crush shells and bones.",
+                details: "Habitat: Devonian seas • Era: Late Devonian • Extinction: ~358 million years ago • Length: Up to 6 meters • Bite force: 7,400 N"
+            },
+            { 
+                name: "Great Auk", 
+                image: "images/extinct/sea/Great Auk.jpg",
+                description: "A flightless bird that inhabited the North Atlantic, the original 'penguin' before the name was transferred to southern birds.",
+                details: "Habitat: North Atlantic • Extinction: 1844 • Last pair killed in Iceland • Flightless • Stood about 75-85 cm tall"
+            },
+            { 
+                name: "Caribbean Monk Seal", 
+                image: "images/extinct/sea/Caribbean Monk Seal.jpg",
+                description: "The only seal native to the Caribbean Sea and Gulf of Mexico, last confirmed sighting in 1952.",
+                details: "Habitat: Caribbean Sea • Extinction: 1952 (officially 2008) • Length: 2-2.4 meters • Called 'sea wolf' by Columbus"
+            },
+            { 
+                name: "Japanese Sea Lion", 
+                image: "images/extinct/sea/Japanese Sea Lion.jpg",
+                description: "A sea lion that inhabited the Sea of Japan, extensively hunted for its skin, oil, and internal organs.",
+                details: "Habitat: Sea of Japan • Extinction: 1970s • Last seen: 1974 • Hunted for oil and whiskers (used as pipe cleaners)"
+            }
+        ],
+        birds: [
+            { 
+                name: "Dodo", 
+                image: "images/extinct/birds/Dodo.jpg",
+                description: "A flightless bird endemic to Mauritius, known for its friendly nature and rapid extinction after human arrival.",
+                details: "Habitat: Mauritius • Extinction: ~1662 • Height: 1 meter • Weight: 10-18 kg • Flightless • Last sighting: 1662"
+            },
+            { 
+                name: "Passenger Pigeon", 
+                image: "images/extinct/birds/Passenger Pigeon.jpg",
+                description: "Once the most abundant bird in North America with flocks so large they darkened the sky for days.",
+                details: "Habitat: Eastern North America • Extinction: 1914 • Last individual: Martha • Flocks: Millions of birds • Hunting caused extinction"
+            },
+            { 
+                name: "Moa", 
+                image: "images/extinct/birds/Moa.jpg",
+                description: "Nine species of flightless birds endemic to New Zealand, ranging from turkey-sized to 3.6 meters tall.",
+                details: "Habitat: New Zealand • Extinction: ~1445 AD • Largest: 3.6m tall • Flightless • Hunted by Māori"
+            },
+            { 
+                name: "Elephant Bird", 
+                image: "images/extinct/birds/Elephant Bird.jpg",
+                description: "The largest bird to have ever lived, standing over 3 meters tall and weighing up to 500 kg.",
+                details: "Habitat: Madagascar • Extinction: ~1000-1200 AD • Height: 3+ meters • Eggs: 34 cm long • Largest bird ever"
+            },
+            { 
+                name: "Carolina Parakeet", 
+                image: "images/extinct/birds/Carolina Parakeet.jpg",
+                description: "The only parrot species native to the eastern United States, known for its bright green and yellow plumage.",
+                details: "Habitat: Eastern USA • Extinction: 1939 • Last captive died in Cincinnati Zoo • Social birds lived in flocks"
+            },
+            { 
+                name: "Heath Hen", 
+                image: "images/extinct/birds/Heath Hen.jpg",
+                description: "A subspecies of the greater prairie chicken that lived in the coastal heathlands of New England.",
+                details: "Habitat: New England, USA • Extinction: 1932 • Last individual: Booming Ben • Conservation attempts failed"
+            },
+            { 
+                name: "Labrador Duck", 
+                image: "images/extinct/birds/Labrador Duck.jpg",
+                description: "A sea duck that wintered on the coast of New England and bred in Labrador, mysteriously went extinct.",
+                details: "Habitat: Northeast North America • Extinction: 1878 • Rare even before extinction • Cause unknown"
+            },
+            { 
+                name: "Stephen's Island Wren", 
+                image: "images/extinct/birds/Stephen's Island Wren.jpg",
+                description: "A flightless wren from New Zealand, famously extincted by a single lighthouse keeper's cat.",
+                details: "Habitat: Stephen's Island, NZ • Extinction: 1894 • Flightless • Extinct by single cat (Tibbles)"
+            },
+            { 
+                name: "Hawaiian", 
+                image: "images/extinct/birds/Hawaiian.jpg",
+                description: "Various Hawaiian bird species that went extinct due to habitat loss and introduced species.",
+                details: "Habitat: Hawaii • Extinction: Various dates • Multiple species • Causes: Habitat loss, introduced predators"
+            },
+            { 
+                name: "Ivory-billed Woodpecker", 
+                image: "images/extinct/birds/Ivory-billed Woodpecker.jpg",
+                description: "One of the largest woodpeckers in the world, possibly extinct or critically endangered.",
+                details: "Habitat: Southeastern USA, Cuba • Status: Critically endangered/Possibly extinct • Last confirmed: 1944 • Nickname: Lord God Bird"
+            }
+        ],
+        plants: [
+            { 
+                name: "Lepidodendron", 
+                image: "images/extinct/plants/Lepidodendron.jpg",
+                description: "Ancient tree-like plants related to modern clubmosses that dominated Carboniferous forests.",
+                details: "Habitat: Worldwide • Era: Carboniferous • Extinction: ~300 million years ago • Height: Up to 50 meters • Fossil fuel source"
+            },
+            { 
+                name: "Sigillaria", 
+                image: "images/extinct/plants/Sigillaria.jpg",
+                description: "Tree-like plant with a tall, unbranched trunk and a crown of grass-like leaves.",
+                details: "Habitat: Worldwide • Era: Carboniferous • Extinction: ~300 million years ago • Growth: Spore-bearing • Coal formation"
+            },
+            { 
+                name: "Calamites", 
+                image: "images/extinct/plants/Calamites.jpg",
+                description: "Giant horsetail relatives that grew to tree size in Carboniferous swamp forests.",
+                details: "Habitat: Wetlands worldwide • Era: Carboniferous • Extinction: ~300 million years ago • Height: Up to 20 meters • Hollow stems"
+            },
+            { 
+                name: "Araucarioxylon", 
+                image: "images/extinct/plants/Araucarioxylon.jpg",
+                description: "Petrified wood from ancient conifer trees, famous from the Petrified Forest National Park.",
+                details: "Habitat: Triassic forests • Era: Triassic • Extinction: ~200 million years ago • Fossil: Petrified wood • Related to modern Araucaria"
+            },
+            { 
+                name: "Saint Helena Olive", 
+                image: "images/extinct/plants/Saint Helena Olive.jpg",
+                description: "A small tree endemic to Saint Helena island, last wild individual died in 1994.",
+                details: "Habitat: Saint Helena island • Extinction: 2003 (last cultivated) • Last wild: 1994 • Conservation attempts failed"
+            },
+            { 
+                name: "Franklinia", 
+                image: "images/extinct/plants/Franklinia.jpg",
+                description: "A tree discovered in 1765 in Georgia, extinct in the wild since 1803 but survives in cultivation.",
+                details: "Habitat: Georgia, USA (wild) • Extinction in wild: 1803 • Survives in cultivation • Named after Benjamin Franklin"
+            },
+            { 
+                name: "Chilean False Beech", 
+                image: "images/extinct/plants/Chilean False Beech.jpg",
+                description: "A tree species from Chile that hasn't been seen since 1959 despite extensive searches.",
+                details: "Habitat: Chile • Last seen: 1959 • Status: Possibly extinct • Habitat destroyed for agriculture"
+            },
+            { 
+                name: "Hawaiian Plant", 
+                image: "images/extinct/plants/Hawaiian Plant.jpg",
+                description: "Several species of Cyanea plants endemic to Hawaii that have gone extinct due to habitat loss.",
+                details: "Habitat: Hawaii • Multiple species extinct • Causes: Invasive species, habitat loss • Some species survive"
+            },
+            { 
+                name: "Silphium", 
+                image: "images/extinct/plants/Silphium (Ancient Mediterranean herb).jpg",
+                description: "A plant highly valued in ancient Rome and Greece for medicine, seasoning, and contraception.",
+                details: "Habitat: Cyrene (Libya) • Extinction: 1st century AD • Used for: Medicine, seasoning, birth control • Could not be cultivated"
+            },
+            { 
+                name: "Sophora toromiro", 
+                image: "images/extinct/plants/Sophora toromiro (Easter Island Tree).jpg",
+                description: "A tree endemic to Easter Island, extinct in the wild but surviving in botanical gardens.",
+                details: "Habitat: Easter Island • Extinct in wild: 1960s • Survives: Botanical gardens • Reintroduction attempts ongoing"
+            }
+        ]
+    };
+
+    // Generate galleries
+    function generateGalleries() {
+        for (const category in speciesData) {
+            const gallery = document.getElementById(category + '-gallery');
+            gallery.innerHTML = '';
+            
+            speciesData[category].forEach(species => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => openModal(species, category);
+                
+                card.innerHTML = `
+                    <img src="${species.image}" alt="${species.name}" loading="lazy">
+                    <h3>${species.name}</h3>
+                `;
+                
+                gallery.appendChild(card);
+            });
+        }
+    }
+
+    // Modal functions
+    function openModal(species, category) {
+        document.getElementById('modalImg').src = species.image;
+        document.getElementById('modalImg').alt = species.name;
+        document.getElementById('modalTitle').textContent = species.name;
+        document.getElementById('modalDescription').textContent = species.description;
+        document.getElementById('modalDetails').textContent = species.details;
+        document.getElementById('speciesModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('speciesModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function showFullImage() {
+        const imgSrc = document.getElementById('modalImg').src;
+        document.getElementById('fullImage').src = imgSrc;
+        document.getElementById('fullImageModal').style.display = 'flex';
+    }
+
+    function closeFullImage() {
+        document.getElementById('fullImageModal').style.display = 'none';
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('speciesModal');
+        const fullImageModal = document.getElementById('fullImageModal');
+        
+        if (event.target == modal) {
+            closeModal();
+        }
+        if (event.target == fullImageModal) {
+            closeFullImage();
+        }
+    }
+
+    // Category display functions
+    function showAllCategories() {
+        const galleries = document.querySelectorAll('.gallery');
+        const titles = document.querySelectorAll('h2');
+        
+        galleries.forEach(gallery => {
+            gallery.classList.add('active');
+        });
+        
+        titles.forEach(title => {
+            title.style.display = 'block';
+        });
+    }
+    
+    function showCategory(category) {
+        const galleries = document.querySelectorAll('.gallery');
+        const titles = document.querySelectorAll('h2');
+        
+        galleries.forEach(gallery => {
+            gallery.classList.remove('active');
+        });
+        
+        titles.forEach(title => {
+            title.style.display = 'none';
+        });
+        
+        document.getElementById(category + '-gallery').classList.add('active');
+        document.getElementById(category + '-title').style.display = 'block';
+        
+        document.getElementById(category + '-gallery').scrollIntoView({behavior: 'smooth'});
+    }
+    
+    // Initialize
+    window.onload = function() {
+        generateGalleries();
+        showAllCategories();
+    }
+</script>
+
+</body>
+</html>
